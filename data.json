@@ -1,0 +1,62 @@
+[
+  {
+    "id": "559facd4-61ea-4e35-8717-0917f34b2c71",
+    "name": "Bombay",
+    "country": "india",
+    "continent": "Asia",
+    "type": "Beach",
+    "budget": 22,
+    "bestSeason": "spring",
+    "description": "Economic Capital of India, IIT Bombay",
+    "imageUrl": "https://d1vwxdpzbgdqj.cloudfront.net/s3-public-images/iitb/iitb_image.jpeg",
+    "createdAt": "2026-09-20T22:45:04.895Z"
+  },
+  {
+    "id": "bec342d6-bbd3-4d23-b57e-716a4b008bb6",
+    "name": "New Delhi",
+    "country": "India",
+    "continent": "Asia",
+    "type": "Culture",
+    "budget": 40,
+    "bestSeason": "Spring",
+    "description": "Capital City of India, IIT DELHI, India GATE",
+    "imageUrl": "https://www.kalitravel.net/blog/wp-content/uploads/delhi-itinerary-india-gate-sunset-new-delhi.webp",
+    "createdAt": "2026-09-07T17:18:08.044Z"
+  },
+  {
+    "id": "sample-kyoto",
+    "name": "Kyoto",
+    "country": "Japan",
+    "continent": "Asia",
+    "type": "Culture",
+    "budget": 140,
+    "bestSeason": "Spring",
+    "description": "Lantern-lit streets, quiet temples, and gardens shaped by centuries of craft.",
+    "imageUrl": "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1200&q=80",
+    "createdAt": "2026-01-10T10:00:00.000Z"
+  },
+  {
+    "id": "sample-cape-town",
+    "name": "Cape Town",
+    "country": "South Africa",
+    "continent": "Africa",
+    "type": "Adventure",
+    "budget": 95,
+    "bestSeason": "Autumn",
+    "description": "Ocean roads, mountain trails, and a food scene framed by dramatic coastlines.",
+    "imageUrl": "https://images.unsplash.com/photo-1580060839134-75a5edca2e99?auto=format&fit=crop&w=1200&q=80",
+    "createdAt": "2026-01-08T10:00:00.000Z"
+  },
+  {
+    "id": "sample-lisbon",
+    "name": "Lisbon",
+    "country": "Portugal",
+    "continent": "Europe",
+    "type": "City break",
+    "budget": 110,
+    "bestSeason": "Summer",
+    "description": "A tiled, sunlit city of hills, small plates, and yellow trams to the river.",
+    "imageUrl": "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?auto=format&fit=crop&w=1200&q=80",
+    "createdAt": "2026-01-05T10:00:00.000Z"
+  }
+]
