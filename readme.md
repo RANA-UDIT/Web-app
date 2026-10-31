@@ -96,7 +96,7 @@ Create or use an Azure Maps account in the Azure portal, then set its subscripti
 
 Map transactions are usage-priced. Azure’s free transaction allowance and current rates depend on product, account offer, and pricing date; the Azure for Students subscription does not guarantee that all resources or use are free. Review the [Azure Maps pricing page](https://azure.microsoft.com/pricing/details/azure-maps/) and your subscription’s budget/credits before creating an account or deploying. The map uses the Azure Maps Render API and its viewport-based attribution API; see [Get Map Tile](https://learn.microsoft.com/rest/api/maps/render/get-map-tile) and [Get Map Attribution](https://learn.microsoft.com/rest/api/maps/render/get-map-attribution).
 
-For local map testing, create an Azure Maps account in the Azure portal only after reviewing the usage pricing: **Create a resource > Azure Maps Account**, choose the Gen2 (`G2`) tier, then open the account's **Authentication** page and copy its primary key into `AZURE_MAPS_SUBSCRIPTION_KEY` in `.env`. Do not reuse or alter resources from the earlier project. When you deploy with the new Trek-Stop Terraform stack, Terraform creates a separate Maps account and configures the app setting for you.
+For local map testing, create an Azure Maps account in the Azure portal only after reviewing the usage pricing: **Create a resource > Azure Maps Account**, choose the Gen2 (`G2`) tier, then open the account's **Authentication** page and copy its primary key into `AZURE_MAPS_SUBSCRIPTION_KEY` in `.env`. The existing account `trekstopudit401261` in `rg-trekstop-maps` can be reused. The Terraform deployment below accepts that account's key as a sensitive variable; it does not create another Maps account.
 
 ## Optional Azure deployment with Terraform
 
@@ -109,12 +109,12 @@ Terraform creates a new, uniquely named resource group containing:
 - Linux App Service plan (default **B1**, charged while it exists).
 - Linux Node.js App Service.
 - Serverless Cosmos DB account, database, and trail container (usage charges may apply).
-- Azure Maps Gen2 account in the Azure Maps-supported **Global** location (map transactions are usage-priced).
+- The existing Azure Maps Gen2 account in `rg-trekstop-maps` (no additional Maps account is created; map transactions remain usage-priced).
 - Log Analytics workspace and Application Insights (ingestion/retention can incur charges).
 
 This is **not a guaranteed free deployment**. Before `terraform apply`, check your Azure for Students balance and budget and estimate these resources in the [Azure Pricing Calculator](https://azure.microsoft.com/pricing/calculator/). Actual charges vary by region, offer, requests, stored data, and telemetry. This guide does not deploy or remove any cloud resources on your behalf.
 
-The subscription policy assignment was checked for this workspace: it allows `koreacentral`, `malaysiawest`, `indiasouthcentral`, `centralindia`, and `uaenorth`, and its policy definition exempts resources whose location is `global`. The App Service, Cosmos DB, and monitoring resources use `centralindia`; Azure Maps accounts use `global` because that is the supported account location reported for `Microsoft.Maps` in this subscription. This is a resource-provisioning location distinction—the Azure Maps APIs still serve the trail map normally. Azure Maps geographic data-residency endpoints are a separate feature; this demo uses the public `atlas.microsoft.com` endpoint.
+The subscription policy allows `koreacentral`, `malaysiawest`, `indiasouthcentral`, `centralindia`, and `uaenorth`, and the policy definition exempts `global`. The App Service, Cosmos DB, and monitoring resources use `centralindia`. The already-created Azure Maps account is in `global`, which is supported for Maps in this subscription. This deployment reuses it and does not create another Maps account.
 
 ### Prerequisites and isolated Terraform setup
 
@@ -127,15 +127,34 @@ az account set --subscription "<your-subscription-id>"
 az account show --output table
 ```
 
-Prepare the new stack’s variables:
+Fetch the existing Maps key into the current PowerShell process without printing it. Terraform's sensitive variable receives it from the environment:
+
+```powershell
+$mapsKey = az maps account keys list `
+  --name trekstopudit401261 `
+  --resource-group rg-trekstop-maps `
+  --query primaryKey `
+  --output tsv
+if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($mapsKey)) {
+  throw "Could not retrieve the Azure Maps key."
+}
+$env:TF_VAR_azure_maps_subscription_key = $mapsKey
+Remove-Variable mapsKey
+```
+
+Prepare the isolated Terraform stack and set its subscription ID:
 
 ```powershell
 Set-Location C:\Users\uditr\Downloads\Web-app\infra\trekstop
 Copy-Item .\terraform.tfvars.example .\terraform.tfvars
-notepad .\terraform.tfvars
+$subscriptionId = az account show --query id --output tsv
+if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($subscriptionId)) {
+  throw "Could not read the selected Azure subscription."
+}
+Set-Content .\terraform.tfvars "subscription_id = `"$subscriptionId`""
 ```
 
-Set `subscription_id` to the intended subscription ID. Then initialize and review only; these commands do not create the stack’s Azure resources:
+Initialize, validate, and review the plan. These steps do not create the stack's resources:
 
 ```powershell
 terraform init
@@ -145,14 +164,18 @@ terraform plan -out trekstop.tfplan
 terraform show trekstop.tfplan
 ```
 
-Read the complete plan and estimate charges before approving creation. If (and only if) the region, resources, subscription, and budget are acceptable, deploy the reviewed plan:
+The plan should create a new App Service, Cosmos DB, monitoring resources, and resource group, but **not** another Azure Maps account. Review the complete plan and estimate charges before approving creation. If (and only if) the region, resources, subscription, and budget are acceptable, deploy the reviewed plan:
 
 ```powershell
 terraform apply trekstop.tfplan
 terraform output
 ```
 
-The Terraform-created Maps key is passed to the App Service as an application setting; Terraform state can contain credentials. Keep `.tfstate`, `.tfplan`, `.tfvars`, and `.env` private and never commit or screenshot their contents. Terraform state is ignored by Git.
+The existing Maps key is passed to the App Service as an application setting. Terraform state can contain credentials. Keep `.tfstate`, `.tfplan`, `.tfvars`, and `.env` private and never commit or screenshot their contents. Terraform state is ignored by Git. After apply, clear the sensitive environment variable:
+
+```powershell
+Remove-Item Env:\TF_VAR_azure_maps_subscription_key
+```
 
 ### Deploy the application package
 
@@ -166,8 +189,9 @@ $resourceGroup = terraform output -raw resource_group_name
 $appName = terraform output -raw app_name
 Set-Location $repoRoot
 
-$packageDirectory = Join-Path $repoRoot "trekstop-package"
-$zipPath = Join-Path $repoRoot "trekstop-deploy.zip"
+$buildId = [guid]::NewGuid().ToString("N")
+$packageDirectory = Join-Path $env:TEMP "trekstop-package-$buildId"
+$zipPath = Join-Path $env:TEMP "trekstop-deploy-$buildId.zip"
 New-Item -ItemType Directory -Force $packageDirectory | Out-Null
 Copy-Item .\server.js, .\package.json, .\package-lock.json, .\trails.json -Destination $packageDirectory -Force
 Copy-Item .\public -Destination $packageDirectory -Recurse -Force
@@ -184,10 +208,28 @@ az webapp deploy `
   --type zip
 
 Set-Location .\infra\trekstop
-terraform output -raw application_url
+$deploymentUrl = terraform output -raw application_url
+Set-Location $repoRoot
+Write-Output $deploymentUrl
 ```
 
-The ZIP deployment uses App Service remote build to install the dependencies from `package-lock.json`. The site’s startup command is `node server.js`. Verify `/api/health`, `/api/trails`, and the map in a browser. Do not copy the Maps key into browser code to troubleshoot.
+The ZIP deployment uses App Service remote build to install the dependencies from `package-lock.json`. The site’s startup command is `node server.js`. Check its health before seeding the sample trails into Cosmos DB:
+
+```powershell
+Invoke-RestMethod "$deploymentUrl/api/health"
+$sampleTrails = Get-Content (Join-Path $repoRoot "trails.json") -Raw | ConvertFrom-Json
+foreach ($trail in $sampleTrails) {
+  $body = $trail | ConvertTo-Json -Depth 10
+  Invoke-RestMethod `
+    -Uri "$deploymentUrl/api/trails" `
+    -Method Post `
+    -ContentType "application/json" `
+    -Body $body
+}
+Invoke-RestMethod "$deploymentUrl/api/trails"
+```
+
+Open `$deploymentUrl` in a browser and confirm the map, markers, and trail list load. Do not copy the Maps key into browser code to troubleshoot.
 
 ### Cleanup after the assignment (optional)
 

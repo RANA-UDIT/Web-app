@@ -12,8 +12,3 @@ output "resource_group_name" {
   description = "Resource group created exclusively for Trek-Stop."
   value       = azurerm_resource_group.trekstop.name
 }
-
-output "maps_account_name" {
-  description = "Azure Maps account provisioned for the server-side map proxy."
-  value       = azurerm_maps_account.trekstop.name
-}

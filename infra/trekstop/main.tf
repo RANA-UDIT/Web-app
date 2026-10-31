@@ -68,15 +68,6 @@ resource "azurerm_cosmosdb_sql_container" "trails" {
   partition_key_paths = ["/region"]
 }
 
-resource "azurerm_maps_account" "trekstop" {
-  name                         = "mapstrek${local.suffix}"
-  location                     = "global"
-  resource_group_name          = azurerm_resource_group.trekstop.name
-  sku_name                     = "G2"
-  local_authentication_enabled = true
-  tags                         = local.tags
-}
-
 resource "azurerm_service_plan" "trekstop" {
   name                = "plan-trekstop-${local.suffix}"
   location            = azurerm_resource_group.trekstop.location
@@ -103,7 +94,7 @@ resource "azurerm_linux_web_app" "trekstop" {
 
   app_settings = {
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.trekstop.connection_string
-    AZURE_MAPS_SUBSCRIPTION_KEY           = azurerm_maps_account.trekstop.primary_access_key
+    AZURE_MAPS_SUBSCRIPTION_KEY           = var.azure_maps_subscription_key
     COSMOS_CONTAINER                      = azurerm_cosmosdb_sql_container.trails.name
     COSMOS_DATABASE                       = azurerm_cosmosdb_sql_database.trekstop.name
     COSMOS_ENDPOINT                       = azurerm_cosmosdb_account.trekstop.endpoint

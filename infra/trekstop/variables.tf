@@ -15,6 +15,12 @@ variable "app_service_sku" {
   default     = "B1"
 }
 
+variable "azure_maps_subscription_key" {
+  description = "Primary key for the existing Azure Maps account used by Trek-Stop."
+  type        = string
+  sensitive   = true
+}
+
 variable "tags" {
   description = "Tags applied to the new Trek-Stop resources."
   type        = map(string)
