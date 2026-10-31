@@ -1,22 +1,23 @@
 {
-  "name": "cloud-travel-catalogue",
+  "name": "trek-stop",
   "version": "1.0.0",
   "private": true,
-  "description": "Travel catalogue for Cloud Computing Assignment 2",
+  "description": "Azure Maps-powered hiking trail guide and web services demo",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "test": "node --test"
   },
   "engines": {
     "node": ">=18"
   },
   "dependencies": {
     "@azure/cosmos": "^4.3.0",
-    "@azure/storage-blob": "^12.27.0",
     "applicationinsights": "^3.10.0",
     "dotenv": "^16.6.1",
     "express": "^5.1.0",
-    "multer": "^2.0.2"
+    "express-rate-limit": "^8.7.2",
+    "leaflet": "^1.9.4"
   }
 }

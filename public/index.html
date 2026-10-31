@@ -3,62 +3,158 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="A public cloud travel destination catalogue.">
-  <title>Atlas / Travel catalogue</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <meta name="description" content="Discover Indian hiking trails with Trek-Stop, an Azure Maps-powered trail guide.">
+  <title>Trek-Stop | Trail guide</title>
+  <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
   <link rel="stylesheet" href="/styles.css">
 </head>
-<body class="theme-lux">
-  <div class="shell">
+<body>
+  <div class="page-shell">
     <header class="topbar">
-      <a class="brand" href="/" aria-label="U_ATlas Travel App home"><span class="brand-mark">A</span><span>U_ATlas Travel App<span class="brand-dot">.</span></span></a>
-      <span class="status"><span class="status-dot"></span>--</span>
+      <a class="brand" href="/" aria-label="Trek-Stop home">
+        <span class="brand-icon" aria-hidden="true">T</span>
+        <span>TREK<span class="brand-divider">/</span>STOP</span>
+      </a>
+      <div class="topbar-right">
+        <span class="map-status"><span class="status-dot"></span><span id="mapStatusText">Checking map service</span></span>
+        <button class="button button-outline" id="openTrailForm" type="button">+ Add a trail</button>
+      </div>
     </header>
 
     <main>
-      <section class="intro">
-        <p class="eyebrow">By UDIT (2025SIY7621)</p>
-        <h1>Explore.<br><em>Save. Go..</em></h1>
-        <p class="intro-copy">Browse new places & add your own favorites.</p>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">INDIA · OUTDOOR TRAIL GUIDE</p>
+          <h1>Take the<br><em>long way.</em></h1>
+          <p class="hero-description">By UDIT (2025SIY7621) MS Research IIT DELHI-----------------------Find a trail, read the terrain at a glance, and make the next weekend count.</p>
+          <div class="hero-tags" aria-label="Trail guide features">
+            <span>Curated routes</span><span>Difficulty at a glance</span><span>Map-powered</span>
+          </div>
+        </div>
+        <div class="hero-aside">
+          <span class="aside-number">01</span>
+          <p>Find your pace.<br>Leave the usual behind.</p>
+          <span class="aside-rule"></span>
+          <span class="aside-caption">A student web services project</span>
+        </div>
       </section>
 
-      <section class="toolbar" aria-label="Catalogue filters">
-        <label class="search-box"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Search destinations" autocomplete="off"></label>
-        <label><span class="sr-only">Continent</span><select id="continent"><option value="">All continents</option><option> Africa</option><option>Asia</option><option>Europe</option><option>North America</option><option>South America</option><option>Oceania</option></select></label>
-        <label><span class="sr-only">Type</span><select id="type"><option value="">All moods</option><option>Adventure</option><option>Beach</option><option>City break</option><option>Culture</option><option>Nature</option></select></label>
-        <label class="budget-filter"><span>$</span><input id="maxBudget" type="number" min="1" placeholder="Max / day"></label>
-        <button class="primary-button" id="openForm">+ Add destination</button>
+      <section class="explorer" aria-label="Explore trail map">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">THE TRAIL BOARD</p>
+            <h2>Pick your next path</h2>
+          </div>
+          <p class="trail-count"><strong id="resultCount">0</strong> routes</p>
+        </div>
+
+        <div class="filter-bar">
+          <label class="search-field">
+            <span aria-hidden="true">⌕</span>
+            <span class="sr-only">Search trails</span>
+            <input id="search" type="search" placeholder="Search trail or region" autocomplete="off">
+          </label>
+          <label>
+            <span class="sr-only">Filter by region</span>
+            <select id="region"><option value="">All regions</option></select>
+          </label>
+          <label>
+            <span class="sr-only">Filter by difficulty</span>
+            <select id="difficulty">
+              <option value="">Any difficulty</option>
+              <option>Easy</option>
+              <option>Moderate</option>
+              <option>Hard</option>
+            </select>
+          </label>
+          <button class="button button-quiet" id="clearFilters" type="button">Reset</button>
+        </div>
+
+        <div class="map-layout">
+          <div class="map-panel">
+            <div class="map-heading">
+              <span><span class="live-dot"></span> TRAIL LOCATIONS</span>
+              <span class="map-hint">Select a marker to explore</span>
+            </div>
+            <div class="map-wrap">
+              <div id="trailMap" role="application" aria-label="Interactive map of hiking trails in India"></div>
+              <div id="mapNotice" class="map-notice" role="status" hidden></div>
+              <div id="mapAttribution" class="map-attribution" aria-label="Map data attribution"></div>
+            </div>
+          </div>
+          <div class="trail-list-panel">
+            <div class="list-heading">
+              <span>ROUTES TO KNOW</span>
+              <span id="listSummary">—</span>
+            </div>
+            <div id="trails" class="trail-list" aria-live="polite"></div>
+            <p id="emptyState" class="empty-state" hidden>No trails match these filters. Try resetting your search.</p>
+          </div>
+        </div>
+        <p class="data-note">Trail distances and elevation figures are illustrative demo data. Check current local guidance and conditions before any hike.</p>
       </section>
 
-      <div class="catalogue-heading"><p><span id="resultCount">0</span> destinations in the atlas</p><button class="text-button" id="clearFilters">Clear filters</button></div>
-      <section id="destinations" class="destination-grid" aria-live="polite"></section>
-      <p id="emptyState" class="empty-state" hidden>No destinations match that route. Try clearing a filter.</p>
+      <section class="services" aria-labelledby="servicesTitle">
+        <div class="services-title">
+          <p class="eyebrow">UNDER THE HOOD</p>
+          <h2 id="servicesTitle">A small app, real web services.</h2>
+          <p>This project connects a browser interface to a REST API and cloud services.</p>
+        </div>
+        <div class="service-grid">
+          <article class="service-card">
+            <span class="service-index">01 / API</span>
+            <h3>Trail catalogue</h3>
+            <p>Express exposes JSON endpoints to list, filter, validate, and save trail records.</p>
+            <code>GET · POST /api/trails</code>
+          </article>
+          <article class="service-card">
+            <span class="service-index">02 / DATA</span>
+            <h3>Azure Cosmos DB</h3>
+            <p>Use a cloud document database when configured, or the included local JSON dataset for development.</p>
+            <code>Partitioned by region</code>
+          </article>
+          <article class="service-card">
+            <span class="service-index">03 / MAPS</span>
+            <h3>Azure Maps</h3>
+            <p>Azure map tiles and required attribution are fetched by the server; the subscription key is never sent to the browser.</p>
+            <code>REST · Render API</code>
+          </article>
+        </div>
+      </section>
     </main>
 
-    <footer><span>By UDIT (2025SIY7621) U_ATlas Travel App / CLOUD COMPUTING ASSIGNMENT 02</span><span>Data layer: Azure Cosmos DB</span><span>Features: Blob Storage + Application Insights</span></footer>
+    <footer class="footer">
+      <span>UDIT - 2025SIY7621</span>
+      <span>TREK-STOP · WEB SERVICES EXERCISE</span>
+      <a href="https://learn.microsoft.com/azure/azure-maps/" target="_blank" rel="noreferrer">Azure Maps documentation ↗</a>
+    </footer>
   </div>
 
-  <dialog id="destinationDialog">
-    <form id="destinationForm" method="dialog">
-      <div class="dialog-header"><div><p class="eyebrow">NEW ENTRY</p><h2>Plot a new place.</h2></div><button type="button" class="close-button" id="closeForm" aria-label="Close form">×</button></div>
+  <dialog id="trailDialog">
+    <form id="trailForm" method="dialog">
+      <div class="dialog-header">
+        <div><p class="eyebrow">ADD TO THE TRAIL BOARD</p><h2>Log a new route.</h2></div>
+        <button type="button" class="close-button" id="closeTrailForm" aria-label="Close form">×</button>
+      </div>
       <div id="formMessage" class="form-message" role="alert" hidden></div>
       <div class="form-grid">
-        <label>Destination name<input name="name" required maxlength="80" placeholder="e.g. Hoi An"></label>
-        <label>Country<input name="country" required maxlength="80" placeholder="e.g. Vietnam"></label>
-        <label>Continent<select name="continent" required><option value="">Choose one</option><option>Africa</option><option>Asia</option><option>Europe</option><option>North America</option><option>South America</option><option>Oceania</option></select></label>
-        <label>Travel mood<select name="type" required><option value="">Choose one</option><option>Adventure</option><option>Beach</option><option>City break</option><option>Culture</option><option>Nature</option></select></label>
-        <label>Daily budget (USD)<input name="budget" type="number" min="1" max="10000" required placeholder="75"></label>
-        <label>Best season<input name="bestSeason" required maxlength="30" placeholder="e.g. Winter"></label>
-        <label class="full-width">Description<textarea name="description" required minlength="20" maxlength="500" placeholder="What makes this place worth the journey?"></textarea></label>
-        <label class="full-width">Image URL <span class="optional">optional</span><input name="imageUrl" type="url" placeholder="https://..."></label>
-        <label class="full-width file-input">Or upload an image <span class="optional">optional, up to 5 MB</span><input id="imageFile" type="file" accept="image/jpeg,image/png,image/webp"></label>
+        <label>Trail name<input name="trailName" required maxlength="80" placeholder="e.g. Triund Trek"></label>
+        <label>Region / state<input name="region" required maxlength="100" placeholder="e.g. Himachal Pradesh"></label>
+        <label>Difficulty
+          <select name="difficulty" required><option value="">Choose one</option><option>Easy</option><option>Moderate</option><option>Hard</option></select>
+        </label>
+        <label>Best season<input name="bestSeason" required maxlength="40" placeholder="e.g. March to June"></label>
+        <label>Distance (km)<input name="distanceKm" type="number" min="0.1" max="1000" step="0.1" required placeholder="18"></label>
+        <label>Elevation gain (m)<input name="elevationGainM" type="number" min="0" max="10000" step="1" required placeholder="900"></label>
+        <label>Latitude<input name="latitude" type="number" min="-90" max="90" step="any" required placeholder="32.3265"></label>
+        <label>Longitude<input name="longitude" type="number" min="-180" max="180" step="any" required placeholder="76.3263"></label>
+        <label class="full-width">Trail notes<textarea name="description" required minlength="20" maxlength="500" placeholder="Describe the terrain, highlights, or what hikers should know."></textarea></label>
       </div>
-      <button class="primary-button submit-button" type="submit">Save to the U-AT_las <span>→</span></button>
+      <button class="button button-submit" type="submit">Save trail <span aria-hidden="true">→</span></button>
     </form>
   </dialog>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/vendor/leaflet/leaflet.js"></script>
   <script src="/app.js"></script>
 </body>
 </html>

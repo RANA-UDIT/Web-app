@@ -1,0 +1,93 @@
+[
+  {
+    "id": "14f3fa5a-11c5-467e-85db-3bf3247de141",
+    "trailName": "IIT_D Test",
+    "region": "Delhi",
+    "difficulty": "Moderate",
+    "distanceKm": 10,
+    "elevationGainM": 899,
+    "latitude": 28.5456,
+    "longitude": 77.1954,
+    "bestSeason": "spring",
+    "description": "IITD Trek \nNew Delhi , Delhi INDIA",
+    "createdAt": "2026-10-31T22:50:50.411Z"
+  },
+  {
+    "id": "trail-triund",
+    "trailName": "Triund Trek",
+    "region": "Himachal Pradesh",
+    "difficulty": "Moderate",
+    "distanceKm": 18,
+    "elevationGainM": 900,
+    "latitude": 32.3265,
+    "longitude": 76.3263,
+    "bestSeason": "March–June",
+    "description": "A popular ridge route above McLeod Ganj with broad views toward the Dhauladhar range.",
+    "createdAt": "2026-10-01T10:00:00.000Z"
+  },
+  {
+    "id": "trail-kedarkantha",
+    "trailName": "Kedarkantha Trek",
+    "region": "Uttarakhand",
+    "difficulty": "Hard",
+    "distanceKm": 20,
+    "elevationGainM": 1250,
+    "latitude": 31.0465,
+    "longitude": 78.1757,
+    "bestSeason": "December–April",
+    "description": "A high-altitude forest and summit route starting near Sankri in the Garhwal Himalaya.",
+    "createdAt": "2026-09-28T10:00:00.000Z"
+  },
+  {
+    "id": "trail-valley-flowers",
+    "trailName": "Valley of Flowers",
+    "region": "Uttarakhand",
+    "difficulty": "Moderate",
+    "distanceKm": 18,
+    "elevationGainM": 600,
+    "latitude": 30.7268,
+    "longitude": 79.6052,
+    "bestSeason": "July–September",
+    "description": "A seasonal national-park walk through alpine meadows in the Nanda Devi Biosphere Reserve.",
+    "createdAt": "2026-09-25T10:00:00.000Z"
+  },
+  {
+    "id": "trail-hampta-pass",
+    "trailName": "Hampta Pass",
+    "region": "Himachal Pradesh",
+    "difficulty": "Hard",
+    "distanceKm": 35,
+    "elevationGainM": 1400,
+    "latitude": 32.1986,
+    "longitude": 77.3317,
+    "bestSeason": "June–September",
+    "description": "A multi-day crossing linking the Kullu Valley with the high-altitude landscapes of Lahaul.",
+    "createdAt": "2026-09-22T10:00:00.000Z"
+  },
+  {
+    "id": "trail-nag-tibba",
+    "trailName": "Nag Tibba",
+    "region": "Uttarakhand",
+    "difficulty": "Easy",
+    "distanceKm": 16,
+    "elevationGainM": 1000,
+    "latitude": 30.5726,
+    "longitude": 78.2377,
+    "bestSeason": "October–April",
+    "description": "A weekend ascent through oak and rhododendron forest to a panoramic ridge near Mussoorie.",
+    "createdAt": "2026-09-19T10:00:00.000Z"
+  },
+  {
+    "id": "trail-kheerganga",
+    "trailName": "Kheerganga",
+    "region": "Himachal Pradesh",
+    "difficulty": "Moderate",
+    "distanceKm": 12,
+    "elevationGainM": 800,
+    "latitude": 31.9971,
+    "longitude": 77.5042,
+    "bestSeason": "April–June",
+    "description": "A forested valley trail in Parvati Valley with river views and a high meadow destination.",
+    "createdAt": "2026-09-16T10:00:00.000Z"
+  }
+]
