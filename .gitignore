@@ -10,3 +10,8 @@ node_modules/
 **/*.tfstate.*
 **/*.tfvars
 **/*.tfplan
+
+cc_assign3_ss/
+csv_results/
+docs/
+node_modules/

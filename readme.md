@@ -195,7 +195,40 @@ $zipPath = Join-Path $env:TEMP "trekstop-deploy-$buildId.zip"
 New-Item -ItemType Directory -Force $packageDirectory | Out-Null
 Copy-Item .\server.js, .\package.json, .\package-lock.json, .\trails.json -Destination $packageDirectory -Force
 Copy-Item .\public -Destination $packageDirectory -Recurse -Force
-Compress-Archive -Path (Join-Path $packageDirectory "*") -DestinationPath $zipPath -Force
+
+# Create Linux-compatible ZIP entry names (forward slashes, not Windows backslashes).
+Add-Type -AssemblyName System.IO.Compression
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+$archive = [System.IO.Compression.ZipFile]::Open(
+  $zipPath,
+  [System.IO.Compression.ZipArchiveMode]::Create
+)
+try {
+  Get-ChildItem -LiteralPath $packageDirectory -Recurse -File | ForEach-Object {
+    $entryName = $_.FullName.Substring($packageDirectory.Length + 1).Replace('\', '/')
+    [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
+      $archive,
+      $_.FullName,
+      $entryName,
+      [System.IO.Compression.CompressionLevel]::Optimal
+    ) | Out-Null
+  }
+} finally {
+  $archive.Dispose()
+}
+
+$checkArchive = [System.IO.Compression.ZipFile]::OpenRead($zipPath)
+try {
+  $entryNames = @($checkArchive.Entries | ForEach-Object { $_.FullName })
+  if (@($entryNames | Where-Object { $_.Contains('\') }).Count -gt 0) {
+    throw "ZIP contains a Windows-style entry path. Do not deploy this archive."
+  }
+  if ($entryNames -notcontains "server.js" -or $entryNames -notcontains "public/index.html") {
+    throw "ZIP is missing server.js or public/index.html."
+  }
+} finally {
+  $checkArchive.Dispose()
+}
 
 az webapp config appsettings set `
   --resource-group $resourceGroup `
