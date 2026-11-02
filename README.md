@@ -1,21 +1,9 @@
 # Trek-Stop
 
-Trek-Stop is a hiking and trail guide built for the **Special Topics in Database Systems — Exercise 4** web-services assignment. It replaces the copied travel catalogue with an interactive trail board, an Express REST API, Azure Maps, and optional Azure Cosmos DB storage.
+Trek-Stop is a hiking and trail guide built for the **Special Topics in Database Systems — Exercise 4** web-services Course.
 
-The frontend byline is **UDIT - 2025SIY7621**. Trail distances and elevation values in the starter dataset are illustrative, not official route or safety information.
+**UDIT - 2025SIY7621**. Trail distances and elevation values in the starter dataset are illustrative, not official route or safety information.
 
-## What the assignment asks for
-
-The brief provided for this project asks you to:
-
-1. Demonstrate your effort to build a web-services application in the viva voce (at least one application/service).
-2. Submit a short report of **no more than two pages**, with screenshots, summarizing difficulties, successes, or failures.
-
-The brief does **not** specify a map provider, cloud deployment, performance targets, or required measurements. Azure deployment below is an optional project deployment workflow, not a requirement stated in that brief.
-
-### Suggested report evidence
-
-The assignment requires screenshots but does not prescribe their number or exact contents. A concise report can include:
 
 - **Goal and design:** Trek-Stop, its trail REST API, Azure Maps, and (when configured) Cosmos DB.
 - **Implementation and demo:** one screenshot of the UI with the map and trail list; one of a working filter or added trail; one API response such as `GET /api/trails`.
@@ -273,5 +261,3 @@ terraform plan -destroy -out trekstop-destroy.tfplan
 terraform show trekstop-destroy.tfplan
 terraform apply trekstop-destroy.tfplan
 ```
-
-Do not run cleanup against the historical `infra/terraform` directory or another resource group.
